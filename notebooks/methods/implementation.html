@@ -62,6 +62,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/methods/implementation';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -175,6 +177,9 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../methods.html">METHODS</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../methods/theory.html">Theory</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Implementation</a></li>
+
+
+
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../conclusion.html">CONCLUSION</a></li>
@@ -417,7 +422,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -433,6 +440,18 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Implementation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#openaq">OPENAQ</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#world-aqi">WORLD AQI</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-measurements">Compare measurements</a></li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -449,10 +468,170 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 </pre></div>
 </div>
 </div>
 </div>
+</section>
+<section id="openaq">
+<h1>OPENAQ<a class="headerlink" href="#openaq" title="Permalink to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oaq_endpoint</span> <span class="o">=</span> <span class="s2">&quot;https://api.openaq.org/v2/cities?country=MX&quot;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;oaq_cities_data_mx.json&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">oaq_endpoint</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+    <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oaq_endpoint</span> <span class="o">=</span> <span class="s2">&quot;https://api.openaq.org/v2/locations?city=Mexico City&quot;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;oaq_data_mexico_city.json&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">oaq_endpoint</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+    <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="world-aqi">
+<h1>WORLD AQI<a class="headerlink" href="#world-aqi" title="Permalink to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;waqi_key.txt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>NOTE</strong>: we will NOT assume the end user has these libraries installed, thus making this a usable and useful notebook, instead of one that will break when the requisite libraries are not installed.  We should also put this in a <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w">  </span>ozon3
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: ozon3 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (4.0.2)
+Requirement already satisfied: numpy in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from ozon3) (1.24.3)
+Requirement already satisfied: pandas in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from ozon3) (1.5.3)
+Requirement already satisfied: requests in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from ozon3) (2.31.0)
+Requirement already satisfied: openpyxl in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from ozon3) (3.0.10)
+Requirement already satisfied: ratelimit in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from ozon3) (2.2.1)
+Requirement already satisfied: js2py in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from ozon3) (0.74)
+Requirement already satisfied: sseclient-py in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from ozon3) (1.8.0)
+Requirement already satisfied: tzlocal&gt;=1.2 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from js2py-&gt;ozon3) (5.2)
+Requirement already satisfied: six&gt;=1.10 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from js2py-&gt;ozon3) (1.16.0)
+Requirement already satisfied: pyjsparser&gt;=2.5.1 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from js2py-&gt;ozon3) (2.7.1)
+Requirement already satisfied: et_xmlfile in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from openpyxl-&gt;ozon3) (1.1.0)
+Requirement already satisfied: python-dateutil&gt;=2.8.1 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from pandas-&gt;ozon3) (2.8.2)
+Requirement already satisfied: pytz&gt;=2020.1 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from pandas-&gt;ozon3) (2022.7)
+Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from requests-&gt;ozon3) (2.0.4)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from requests-&gt;ozon3) (3.4)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from requests-&gt;ozon3) (1.26.16)
+Requirement already satisfied: certifi&gt;=2017.4.17 in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from requests-&gt;ozon3) (2023.7.22)
+Requirement already satisfied: tzdata in c:\users\kmaull\appdata\local\anaconda3\lib\site-packages (from tzlocal&gt;=1.2-&gt;js2py-&gt;ozon3) (2023.4)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ozon3</span> <span class="k">as</span> <span class="nn">ooo</span>
+<span class="n">o3</span> <span class="o">=</span> <span class="n">ooo</span><span class="o">.</span><span class="n">Ozon3</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
+
+<span class="n">station</span> <span class="o">=</span> <span class="p">(</span><span class="mf">19.334</span><span class="p">,</span><span class="o">-</span><span class="mf">99.182</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">o3</span><span class="o">.</span><span class="n">get_coordinate_air</span><span class="p">(</span><span class="o">*</span><span class="n">station</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;city&#39;, &#39;latitude&#39;, &#39;longitude&#39;, &#39;station&#39;, &#39;dominant_pollutant&#39;,
+       &#39;timestamp&#39;, &#39;timestamp_timezone&#39;, &#39;aqi&#39;, &#39;AQI_meaning&#39;,
+       &#39;AQI_health_implications&#39;, &#39;pm2.5&#39;, &#39;pm10&#39;, &#39;o3&#39;, &#39;co&#39;, &#39;no2&#39;, &#39;so2&#39;,
+       &#39;dew&#39;, &#39;h&#39;, &#39;p&#39;, &#39;t&#39;, &#39;w&#39;, &#39;wg&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;pm2.5&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0    95.0
+Name: pm2.5, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="compare-measurements">
+<h1>Compare measurements<a class="headerlink" href="#compare-measurements" title="Permalink to this heading">#</a></h1>
+<p>Because the city is empty, we might want to know if we are
+looking at the same station.</p>
+<p>Let’s compare the data to find out – if it is the same station
+(maybe) the data will be the same.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oaq_endpoint</span> <span class="o">=</span> <span class="s2">&quot;https://api.openaq.org/v2/latest/1285351&quot;</span>
+
+<span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">oaq_endpoint</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># df = pd.DataFrame.from_records(r.json()[&#39;results&#39;][0])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;results&#39;</span><span class="p">],</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df_m</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">df_m</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;measurements&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;location&#39;: &#39;SPARTAN - Mexico City&#39;, &#39;city&#39;: &#39;Mexico City&#39;, &#39;country&#39;: &#39;MX&#39;, &#39;coordinates&#39;: {&#39;latitude&#39;: 19.334, &#39;longitude&#39;: -99.182}, &#39;measurements&#39;: [{&#39;parameter&#39;: &#39;pm25&#39;, &#39;value&#39;: 26.9, &#39;lastUpdated&#39;: &#39;2023-05-31T11:00:00+00:00&#39;, &#39;unit&#39;: &#39;µg/m³&#39;}]}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0    26.9
+Name: value, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;pm2.5&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0    False
+dtype: bool
+</pre></div>
+</div>
+</div>
+</div>
+<p>These things don’t look the same.  Our analysis is done. <span class="math notranslate nohighlight">\(\Xi\)</span></p>
 </section>
 
     <script type="text/x-thebe-config">
@@ -510,7 +689,24 @@ document.write(`
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"></div>
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Implementation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#openaq">OPENAQ</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#world-aqi">WORLD AQI</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-measurements">Compare measurements</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
               
             
           </div>
