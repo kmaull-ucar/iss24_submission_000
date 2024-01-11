@@ -1,6 +1,11 @@
 format: jb-book
 root: README
-parts:
-  - caption: Paper Title 1
-    chapters:
-      - file: notebooks/notebook-template
+# parts:
+chapters:
+- file: introduction
+- file: methods
+  sections: 
+  - file: methods/theory
+  - file: notebooks/methods/implementation
+- file: conclusion
+- file: bibliography

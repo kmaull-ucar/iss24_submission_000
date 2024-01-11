@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: Notebook Template
+title: ISS24 Example Notebook Template
 author: SEA Software Engineering Assembly Committee
 copyright: "2024"  # Copyright year to be placed in the footer
 
